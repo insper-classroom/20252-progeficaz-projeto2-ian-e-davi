@@ -1,55 +1,76 @@
-class FakeRepo:
-    def __init__(self, seed=None):
-        self.items = {}
+# repo/fake_repo.py
+
+from typing import List, Dict, Optional
+
+# campos do schema oficial:
+CAMPOS = [
+    "id",
+    "logradouro",
+    "tipo_logradouro",
+    "bairro",
+    "cidade",
+    "cep",
+    "tipo",
+    "valor",
+    "data_aquisicao",
+]
+
+class ImoveisRepo:
+    def __init__(self):
+        # armazenamento em memória
+        self._itens: List[Dict] = []
         self._next_id = 1
-        for obj in (seed or []):
-            _id = obj.get("id")
-            if not _id:
-                _id = self._next_id
-                obj["id"] = _id
-            self.items[_id] = dict(obj)
-            self._next_id = max(self._next_id, _id + 1)
 
-    def _gen_id(self):
-        _id = self._next_id
+    def _copy_public(self, item: Dict) -> Dict:
+        # retorna apenas os campos esperados
+        return {k: item.get(k) for k in CAMPOS if k in item}
+
+    # CRUD básico
+    def list_all(self) -> List[Dict]:
+        return [self._copy_public(x) for x in self._itens]
+
+    def get_by_id(self, _id: int) -> Optional[Dict]:
+        for it in self._itens:
+            if it["id"] == _id:
+                return self._copy_public(it)
+        return None
+
+    def create(self, data: Dict) -> Dict:
+        novo = {
+            "id": self._next_id,
+            "logradouro": data.get("logradouro"),
+            "tipo_logradouro": data.get("tipo_logradouro"),
+            "bairro": data.get("bairro"),
+            "cidade": data.get("cidade"),
+            "cep": data.get("cep"),
+            "tipo": data.get("tipo"),
+            "valor": data.get("valor"),
+            "data_aquisicao": data.get("data_aquisicao"),
+        }
+        self._itens.append(novo)
         self._next_id += 1
-        return _id
+        return self._copy_public(novo)
 
-    # LIST/FILTER
-    def list_all(self, *, tipo=None, cidade=None):
-        vals = list(self.items.values())
-        if tipo:
-            vals = [v for v in vals if (v.get("tipo") or "").lower() == tipo.lower()]
-        if cidade:
-            vals = [v for v in vals if (v.get("cidade") or "").lower() == cidade.lower()]
-        return vals
+    def update(self, _id: int, data: Dict) -> Optional[Dict]:
+        for it in self._itens:
+            if it["id"] == _id:
+                # atualiza só chaves presentes em data
+                for k in CAMPOS:
+                    if k != "id" and k in data:
+                        it[k] = data[k]
+                return self._copy_public(it)
+        return None
 
-    # GET
-    def get(self, _id):
-        return self.items.get(_id)
+    def delete(self, _id: int) -> bool:
+        for i, it in enumerate(self._itens):
+            if it["id"] == _id:
+                del self._itens[i]
+                return True
+        return False
 
-    # CREATE (id opcional)
-    def create(self, obj):
-        new_obj = dict(obj)
-        _id = new_obj.get("id")
-        if _id is None:
-            _id = self._gen_id()
-            new_obj["id"] = _id
-        if _id in self.items:
-            return None  # conflito
-        # garante todas as chaves do esquema existam, se quiser
-        for k in ["logradouro","tipo_logradouro","bairro","cidade","cep","tipo","valor","data_aquisicao"]:
-            new_obj.setdefault(k, None)
-        self.items[_id] = new_obj
-        return new_obj
+    # filtros
+    def list_by_tipo(self, tipo: str) -> List[Dict]:
+        return [self._copy_public(x) for x in self._itens if (x.get("tipo") == tipo)]
 
-    # UPDATE parcial
-    def update(self, _id, patch):
-        if _id not in self.items:
-            return None
-        self.items[_id].update({k: v for k, v in patch.items() if k != "id"})
-        return self.items[_id]
-
-    # DELETE
-    def delete(self, _id):
-        return self.items.pop(_id, None) is not None
+    def list_by_cidade(self, cidade: str) -> List[Dict]:
+        return [self._copy_public(x) for x in self._itens if (x.get("cidade") == cidade)]

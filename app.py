@@ -1,15 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask
 from routes.imoveis import bp as imoveis_bp
-import os
 
-def create_app():
+def create_app(repo):
     app = Flask(__name__)
+    # injeta o repositório (FakeRepo nos testes; MySQL em prod)
+    app.config["REPO"] = repo
     app.register_blueprint(imoveis_bp)
-
-    @app.get(os.getenv("API_PREFIX", "/api/v1") + "/health")
-    def health():
-        return jsonify({"status":"ok"}), 200
-
     return app
-
-app = create_app()

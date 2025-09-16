@@ -47,11 +47,22 @@ def _conn():
     )
 
 class ImoveisRepo:
-    """Implementação real usando MySQL (Aiven)."""
-
-    def list_all(self) -> List[Dict]:
+    
+    def list_all(self, tipo: str = None, cidade: str = None) -> List[Dict]:
+        sql = "SELECT * FROM imoveis"
+        params = []
+        where = []
+        if tipo:
+            where.append("tipo=%s")
+            params.append(tipo)
+        if cidade:
+            where.append("cidade=%s")
+            params.append(cidade)
+        if where:
+            sql += " WHERE " + " AND ".join(where)
+        sql += " ORDER BY id ASC"
         with _conn().cursor() as c:
-            c.execute("SELECT * FROM imoveis ORDER BY id ASC")
+            c.execute(sql, params)
             rows = c.fetchall()
         return [self._only_public(r) for r in rows]
 
@@ -60,6 +71,9 @@ class ImoveisRepo:
             c.execute("SELECT * FROM imoveis WHERE id=%s", (_id,))
             row = c.fetchone()
         return self._only_public(row) if row else None
+    
+    def get(self, _id: int) -> Optional[Dict]:
+        return self.get_by_id(_id)
 
     def create(self, data: Dict) -> Dict:
         cols = [

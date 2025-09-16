@@ -1,10 +1,12 @@
+import sys, pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+
 import pytest
 from app import create_app
-from repo.fake_repo import FakeRepo
+from repo.fake_repo import ImoveisRepo as FakeRepo  # ou: from repo import FakeRepo
 
 @pytest.fixture
 def repo():
-    
     return FakeRepo([
         {"id": 1, "logradouro": "Rua 1", "tipo_logradouro": "rua", "bairro": "Centro",
          "cidade": "São Paulo", "cep": "01000-000", "tipo": "casa", "valor": 500000.0, "data_aquisicao": "2020-01-01"},

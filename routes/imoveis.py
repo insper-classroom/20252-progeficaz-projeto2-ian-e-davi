@@ -68,3 +68,7 @@ def remover(_id):
         return jsonify({"erro": "não encontrado"}), 404
     ok = r.delete(_id)
     return (Response(status=204) if ok else (jsonify({"erro": "conflito na remoção"}), 409))
+
+@bp.get("/health")
+def health():
+    return {"status": "ok"}, 200

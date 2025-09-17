@@ -1,4 +1,4 @@
-# tests/test_http_codes.py
+
 
 def _novo(**overrides):
     base = {
@@ -25,7 +25,7 @@ def test_post_201_location(client):
     r = client.post("/imoveis", json=_novo())
     assert r.status_code == 201
     assert "Location" in r.headers
-    # consegue acessar o recurso pelo Location?
+    
     loc = r.headers["Location"]
     r2 = client.get(loc)
     assert r2.status_code == 200
@@ -52,7 +52,7 @@ def test_put_404_quando_inexistente(client):
 
 
 def test_put_200_atualiza_total_em_existente(client):
-    # seu repo já vem com id=1 existente no conftest
+    
     r = client.put("/imoveis/1", json=_novo(cidade="Campinas"))
     assert r.status_code == 200
     body = r.get_json()
@@ -60,7 +60,7 @@ def test_put_200_atualiza_total_em_existente(client):
 
 
 def test_patch_200_atualiza_parcial_em_existente(client):
-    # repo já tem id=2
+    
     r = client.patch("/imoveis/2", json={"cidade": "Santos"})
     assert r.status_code == 200
     body = r.get_json()
@@ -68,7 +68,7 @@ def test_patch_200_atualiza_parcial_em_existente(client):
 
 
 def test_delete_204_e_depois_404(client):
-    # repo já tem id=3
+    
     r1 = client.delete("/imoveis/3")
     assert r1.status_code == 204
     r2 = client.delete("/imoveis/3")

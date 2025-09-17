@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
 
-# campos do schema oficial:
+
 CAMPOS = [
     "id",
     "logradouro",
@@ -43,7 +43,7 @@ class ImoveisRepo:
                 return self._copy_public(it)
         return None
 
-    # alias para compatibilidade
+    
     def get(self, _id: int):
         return self.get_by_id(_id)
 
@@ -53,13 +53,13 @@ class ImoveisRepo:
         return val
 
     def create(self, data: Dict) -> Optional[Dict]:
-        # se veio id e já existe -> conflito
+        
         if "id" in data and any(it["id"] == data["id"] for it in self._itens):
             return None
         _id = data.get("id", self._gen_id())
         novo = {k: data.get(k) for k in CAMPOS if k != "id"}
         novo["id"] = _id
-        # garante todas as chaves do schema
+        
         for k in CAMPOS:
             novo.setdefault(k, None)
         self._itens.append(novo)
@@ -82,7 +82,7 @@ class ImoveisRepo:
                 return True
         return False
 
-    # filtros diretos (opcionais; a rota já filtra via list_all)
+    
     def list_by_tipo(self, tipo: str) -> List[Dict]:
         return [self._copy_public(x) for x in self._itens if (x.get("tipo") == tipo)]
 

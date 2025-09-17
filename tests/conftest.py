@@ -3,7 +3,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
 import pytest
 from app import create_app
-from repo.fake_repo import ImoveisRepo as FakeRepo  # ou: from repo import FakeRepo
+from repo.fake_repo import ImoveisRepo as FakeRepo  
 
 @pytest.fixture
 def repo():

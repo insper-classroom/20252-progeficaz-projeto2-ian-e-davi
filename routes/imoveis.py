@@ -76,7 +76,7 @@ def _validate_update_any(data: dict, mode: str):
             pass
     return _validate_update(data, mode=mode)
 
-# ------------------------------ Rotas ----------------------------------------
+
 
 @bp.get("/imoveis")
 def listar():
@@ -183,7 +183,7 @@ def remover(_id):
 def health():
     return {"status": "ok"}, 200
 
-# ---------------------- HATEOAS (helpers) ------------------------------------
+
 
 def _hateoas_enabled() -> bool:
     

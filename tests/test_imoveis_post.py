@@ -1,6 +1,6 @@
 def test_cria_imovel_valido(client):
     novo = {
-        # id opcional
+        
         "logradouro": "Praça 9 de Julho",
         "tipo_logradouro": "praça",
         "bairro": "Centro",
@@ -12,7 +12,7 @@ def test_cria_imovel_valido(client):
     }
     resp = client.post("/imoveis", json=novo)
     assert resp.status_code == 201
-    # pega Location e confirma
+    
     loc = resp.headers.get("Location")
     assert loc
     get = client.get(loc)
@@ -22,7 +22,7 @@ def test_cria_imovel_valido(client):
     assert item["tipo"] == "casa em condominio"
 
 def test_cria_imovel_invalido_minimos(client):
-    # falta logradouro e cidade
+    
     resp = client.post("/imoveis", json={"tipo": "casa"})
     assert resp.status_code == 400
 

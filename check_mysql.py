@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()  # carrega .env antes de importar o repo
+load_dotenv() 
 
 from repo.mysql_repo import ImoveisRepo
 

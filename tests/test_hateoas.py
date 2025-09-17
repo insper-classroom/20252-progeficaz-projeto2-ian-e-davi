@@ -1,4 +1,4 @@
-# tests/test_hateoas.py
+
 
 HEADERS_HAL = {"Accept": "application/hal+json"}
 
@@ -15,7 +15,7 @@ def test_hateoas_lista(client):
     r = client.get("/imoveis?_hal=1", headers=HEADERS_HAL)
     assert r.status_code == 200
     j = r.get_json()
-    # coleção com _links + _embedded
+    
     assert "_links" in j and "_embedded" in j
     assert "self" in j["_links"] and "create" in j["_links"]
     assert "imoveis" in j["_embedded"]

@@ -1,10 +1,10 @@
-# repo/mysql_repo.py
+
 import os
 from typing import Dict, List, Optional, Tuple
 import pymysql
 from urllib.parse import urlparse
 
-# Campos do schema oficial (imoveis.sql)
+
 CAMPOS = [
     "id",
     "logradouro",
@@ -18,11 +18,7 @@ CAMPOS = [
 ]
 
 def _parse_mysql_url(url: str) -> Tuple[str, int, str, str, str]:
-    """
-    Aceita DATABASE_URL no formato:
-      mysql+pymysql://USER:PASSWORD@HOST:PORT/DB
-    Retorna (host, port, user, password, database)
-    """
+    
     if url.startswith("mysql+pymysql://"):
         url = url.replace("mysql+pymysql://", "mysql://", 1)
     parsed = urlparse(url)
@@ -95,7 +91,7 @@ class ImoveisRepo:
         return self.get_by_id(new_id)
 
     def update(self, _id: int, data: Dict) -> Optional[Dict]:
-        # Atualiza só os campos presentes em `data` e diferentes de id
+        
         set_parts = []
         vals = []
         for k in CAMPOS:
@@ -105,7 +101,7 @@ class ImoveisRepo:
                 set_parts.append(f"{k}=%s")
                 vals.append(data[k])
         if not set_parts:
-            # nada pra atualizar, apenas retorna o atual
+            
             return self.get_by_id(_id)
         vals.append(_id)
         sql = f"UPDATE imoveis SET {', '.join(set_parts)} WHERE id=%s"
@@ -134,5 +130,5 @@ class ImoveisRepo:
     def _only_public(row: Optional[Dict]) -> Optional[Dict]:
         if row is None:
             return None
-        # garante apenas as chaves esperadas no JSON
+        
         return {k: row.get(k) for k in CAMPOS}
